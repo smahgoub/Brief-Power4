@@ -1,15 +1,32 @@
 package com.company;
 
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Main {
+
+    // Fonctions pour les couleurs
+    public static final String RESET = "\033[0m";  // Text Reset
+    public static final String BLACK = "\033[0;30m";   // BLACK
+    public static final String CYAN_BOLD = "\033[1;36m";   // CYAN
+    public static final String PURPLE_BOLD = "\033[1;35m"; // PURPLE
+    public static final String ANSI_YELLOW = "\u001B[33m";
+
 
     public static void printArray(int[][] power4) {
         // Affiche la grille du puissance 4
 
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 7; j++) {
-                System.out.print( " | "+ power4[i][j]);
+                if (power4[i][j] == 2) {
+                    System.out.print(" | " + CYAN_BOLD + power4[i][j] + RESET);
+                }
+                if (power4[i][j] == 0) {
+                    System.out.print(" | " + BLACK + power4[i][j] + RESET);
+                }
+                if (power4[i][j] == 1) {
+                    System.out.print(" | " + PURPLE_BOLD + power4[i][j] + RESET);
+                }
             }
             System.out.println(" | ");
         }
@@ -33,14 +50,17 @@ public class Main {
         return rows;
     }
 
-    public static boolean winLine(int[][] power4, int columns,int player) {
+    public static boolean winLine(int[][] power4, int columns, int player) {
         boolean winLine = false;
 
         // Contrôle combinaison gagnante colonne
-        int lineCount= 0;
+        int lineCount = 0;
+
         for (int i = 0; i < 6 && lineCount < 4; i++) {
             if (power4[i][columns] == player) {
                 lineCount++;
+            } else {
+                lineCount = 0;
             }
         }
         // J'ai gagné si linecount est supérieur à 3
@@ -49,7 +69,7 @@ public class Main {
         return winLine;
     }
 
-    public static boolean winColumn(int[][] power4, int rows,int player) {
+    public static boolean winColumn(int[][] power4, int rows, int player) {
         boolean winColumn = false;
 
         // Contrôle combinaison gagnante ligne
@@ -57,6 +77,8 @@ public class Main {
         for (int j = 0; j < 7 && columnCount < 4; j++) {
             if (power4[rows][j] == player) {
                 columnCount++;
+            } else {
+                columnCount = 0;
             }
         }
         // J'ai gagné si columncount est supérieur à 3
@@ -65,31 +87,38 @@ public class Main {
         return winColumn;
     }
 
-    public static boolean winDiagAC(int[][] power4, int rows, int columns,int player) {
+    public static boolean winDiagAC(int[][] power4, int rows, int columns, int player) {
         boolean winDiagAC = false;
 
         // Contrôle combinaison gagnante diagonale NO-SE
         int diagCountAC = 1;
+        int rowsChanged = rows;
+        int columnsChanged = columns;
 
-        while (power4[rows][columns] == player && rows > 1 && columns <5 && diagCountAC < 4) {
+        while (power4[rows][columns] == player && rows > 1 && columns < 5 && diagCountAC < 4) {
             diagCountAC++;
             rows--;
             columns++;
-                   }
+        }
+
+        rows = rowsChanged;
+        columns = columnsChanged;
 
         while (power4[rows][columns] == player && rows < 4 && columns > 1 && diagCountAC < 4) {
             diagCountAC++;
             rows++;
             columns--;
-                    }
+        }
         // J'ai gagné si diagAC est supérieur à 3
         winDiagAC = (diagCountAC > 3);
 
         return winDiagAC;
     }
 
-    public static boolean winDiagBD(int[][] power4, int rows, int columns,int player) git add{
+    public static boolean winDiagBD(int[][] power4, int rows, int columns, int player) {
         boolean winDiagBD = false;
+        int rowsChanged = rows;
+        int columnsChanged = columns;
 
         // Contrôle combinaison gagnante diagonale SO-NE
         int diagCountBD = 1;
@@ -99,6 +128,9 @@ public class Main {
             rows--;
             columns--;
         }
+        rows = rowsChanged;
+        columns = columnsChanged;
+
         while (power4[rows][columns] == player && rows < 6 && columns < 7 && diagCountBD < 4) {
             diagCountBD++;
             rows++;
@@ -124,40 +156,67 @@ public class Main {
         int columns = 0;
         int rows = 0;
         int[][] power4 = new int[6][7];
+        int[] heading = {0, 1, 2, 3, 4, 5, 6};
 
         // Déclaration des variables - pour les contrôles
-        int player=1;
-        boolean winLine = winLine(power4, columns,player);
-        boolean winColumn = winColumn(power4, rows,player);
-        boolean winDiagAC = winDiagAC(power4, columns, rows,player);
-        boolean winDiagBD = winDiagBD(power4, columns, rows,player);
+        int player = 1;
+        boolean winLine = winLine(power4, columns, player);
+        boolean winColumn = winColumn(power4, rows, player);
+        boolean winDiagAC = winDiagAC(power4, rows, columns, player);
+        boolean winDiagBD = winDiagBD(power4, rows, columns, player);
 
         // Boucle de contrôle du jeu
-        for (int compteur = 0; compteur < 42; ++compteur) {
-            if ((winLine == false) && (winColumn == false) && (winDiagAC == false) && (winDiagBD==false)) {
-                if  ((compteur % 2) == 0) { System.out.println("\n"+player1  + ", choississez une colonne (0 à 6) :  ");
-                player=1;}
-                else {System.out.println("\n"+player2  + ", choississez une colonne (0 à 6) :  ");
-                player=2;}
-                columns = sc.nextInt();
-                rows = changeRow(power4, columns, compteur);
-                printArray(power4);
-                winLine = winLine(power4, columns,player);
-                winColumn = winColumn(power4, rows,player);
-                winDiagAC = winDiagAC(power4, rows, columns,player);
-                winDiagBD = winDiagAC(power4, rows, columns,player);
+        String replay = "Oui";
 
-            } else {
-                System.out.println("-------------------------------");
-                if  ((compteur % 2) == 0) { System.out.println("Bravo " + player2 + ", vous avez gagné !!! ");}
-                else {System.out.println("Bravo " + player1 + ", vous avez gagné !!! ");}
-                break;
+                   for (int compteur = 0; compteur < 42; ++compteur) {
+                if ((winLine == false) && (winColumn == false) && (winDiagAC == false) && (winDiagBD == false)) {
+                    if ((compteur % 2) == 0) {
+                        System.out.println(PURPLE_BOLD + "\n" + player1 + ", choississez une colonne (0 à 6) :  " + RESET);
+                        player = 1;
+                    } else {
+                        System.out.println(CYAN_BOLD + "\n" + player2 + ", choississez une colonne (0 à 6) :  " + RESET);
+                        player = 2;
+                    }
+                    columns = sc.nextInt();
 
+                    // Message d'erreur
+                    if (columns >= 7) {
+                        System.out.println(ANSI_YELLOW + "Vous avez besoin de lunettes, vous avez fait crasher le jeu..." + RESET);
+                        compteur--;
+                        continue;
+                    }
+
+                    rows = changeRow(power4, columns, compteur);
+                    printArray(power4);
+                    System.out.println(" -----------------------------");
+                    for (int i = 0; i < 7; i++) {
+                        System.out.print(" | " + heading[i]);
+                    }
+                    System.out.println(" |\n -----------------------------");
+                    winLine = winLine(power4, columns, player);
+                    winColumn = winColumn(power4, rows, player);
+                    winDiagAC = winDiagAC(power4, rows, columns, player);
+                    winDiagBD = winDiagAC(power4, rows, columns, player);
+
+                } else {
+                    System.out.println("              * * *             ");
+                    replay = "Oui";
+
+                    // Annonce du vainqueur
+                    if ((compteur % 2) == 0) {
+                        System.out.println(CYAN_BOLD + "**** Bravo " + player2 + ", vous avez gagné !!! **** ");
+                    }
+
+                    if ((compteur % 2) != 0) {
+                        System.out.println(PURPLE_BOLD + "**** Bravo " + player1 + ", vous avez gagné !!! **** ");
+                    }
+                                      break;
+                }
             }
         }
-
     }
-}
+
+
 
 
 
