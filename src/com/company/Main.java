@@ -166,55 +166,52 @@ public class Main {
         boolean winDiagBD = winDiagBD(power4, rows, columns, player);
 
         // Boucle de contrôle du jeu
-        String replay = "Oui";
-
-                   for (int compteur = 0; compteur < 42; ++compteur) {
-                if ((winLine == false) && (winColumn == false) && (winDiagAC == false) && (winDiagBD == false)) {
-                    if ((compteur % 2) == 0) {
-                        System.out.println(PURPLE_BOLD + "\n" + player1 + ", choississez une colonne (0 à 6) :  " + RESET);
-                        player = 1;
-                    } else {
-                        System.out.println(CYAN_BOLD + "\n" + player2 + ", choississez une colonne (0 à 6) :  " + RESET);
-                        player = 2;
-                    }
-                    columns = sc.nextInt();
-
-                    // Message d'erreur
-                    if (columns >= 7) {
-                        System.out.println(ANSI_YELLOW + "Vous avez besoin de lunettes, vous avez fait crasher le jeu..." + RESET);
-                        compteur--;
-                        continue;
-                    }
-
-                    rows = changeRow(power4, columns, compteur);
-                    printArray(power4);
-                    System.out.println(" -----------------------------");
-                    for (int i = 0; i < 7; i++) {
-                        System.out.print(" | " + heading[i]);
-                    }
-                    System.out.println(" |\n -----------------------------");
-                    winLine = winLine(power4, columns, player);
-                    winColumn = winColumn(power4, rows, player);
-                    winDiagAC = winDiagAC(power4, rows, columns, player);
-                    winDiagBD = winDiagAC(power4, rows, columns, player);
-
+        for (int compteur = 0; compteur < 42; ++compteur) {
+            if ((winLine == false) && (winColumn == false) && (winDiagAC == false) && (winDiagBD == false)) {
+                if ((compteur % 2) == 0) {
+                    System.out.println(PURPLE_BOLD + "\n" + player1 + ", choississez une colonne (0 à 6) :  " + RESET);
+                    player = 1;
                 } else {
-                    System.out.println("              * * *             ");
-                    replay = "Oui";
-
-                    // Annonce du vainqueur
-                    if ((compteur % 2) == 0) {
-                        System.out.println(CYAN_BOLD + "**** Bravo " + player2 + ", vous avez gagné !!! **** ");
-                    }
-
-                    if ((compteur % 2) != 0) {
-                        System.out.println(PURPLE_BOLD + "**** Bravo " + player1 + ", vous avez gagné !!! **** ");
-                    }
-                                      break;
+                    System.out.println(CYAN_BOLD + "\n" + player2 + ", choississez une colonne (0 à 6) :  " + RESET);
+                    player = 2;
                 }
+                columns = sc.nextInt();
+
+                // Message d'erreur
+                if (columns >= 7) {
+                    System.out.println(ANSI_YELLOW + "Vous avez besoin de lunettes, vous avez fait crasher le jeu..." + RESET);
+                    compteur--;
+                    continue;
+                }
+
+                rows = changeRow(power4, columns, compteur);
+                printArray(power4);
+                System.out.println(" -----------------------------");
+                for (int i = 0; i < 7; i++) {
+                    System.out.print(" | " + heading[i]);
+                }
+                System.out.println(" |\n -----------------------------");
+                winLine = winLine(power4, columns, player);
+                winColumn = winColumn(power4, rows, player);
+                winDiagAC = winDiagAC(power4, rows, columns, player);
+                winDiagBD = winDiagAC(power4, rows, columns, player);
+
+            } else {
+                System.out.println("              * * *             ");
+
+                // Annonce du vainqueur
+                if ((compteur % 2) == 0) {
+                    System.out.println(CYAN_BOLD + "**** Bravo " + player2 + ", vous avez gagné !!! **** ");
+                }
+
+                if ((compteur % 2) != 0) {
+                    System.out.println(PURPLE_BOLD + "**** Bravo " + player1 + ", vous avez gagné !!! **** ");
+                }
+                break;
             }
         }
     }
+}
 
 
 
